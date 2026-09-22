@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "hrms/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "hrms/wsgi.py"
+    }
+  ]
+}
