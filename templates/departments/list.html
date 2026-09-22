@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Departments - HRMS{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h2>Departments</h2>
+        <p class="text-muted">Manage company departments</p>
+    </div>
+
+    {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'department_create' %}" class="btn btn-primary">
+            + Add Department
+        </a>
+    {% endif %}
+</div>
+
+<div class="card table-card">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Department</th>
+            <th>Description</th>
+            <th>Employees</th>
+            {% if user.is_staff or user.is_superuser %}
+                <th>Action</th>
+            {% endif %}
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for d in departments %}
+        <tr>
+            <td>{{ d.name }}</td>
+            <td>{{ d.description|default:"-" }}</td>
+            <td>{{ d.employee_count }}</td>
+
+            {% if user.is_staff or user.is_superuser %}
+            <td>
+                <form
+                  method="post"
+                  action="{% url 'department_delete' d.id %}"
+                  onsubmit="return confirm('Delete department?');">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger">
+                        Delete
+                    </button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">
+                No departments found.
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

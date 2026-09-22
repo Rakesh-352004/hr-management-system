@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Management - HRMS{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h2>Leave Management</h2>
+        <p class="text-muted">Apply and manage employee leaves</p>
+    </div>
+
+    <a href="{% url 'leave_create' %}" class="btn btn-primary">
+        + Apply Leave
+    </a>
+</div>
+
+<div class="card table-card">
+<div class="table-responsive">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Employee</th>
+            <th>Type</th>
+            <th>Dates</th>
+            <th>Days</th>
+            <th>Reason</th>
+            <th>Status</th>
+            {% if user.is_staff or user.is_superuser %}
+                <th>Action</th>
+            {% endif %}
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for l in leaves %}
+        <tr>
+            <td>{{ l.employee.user.get_full_name|default:l.employee.user.username }}</td>
+            <td>{{ l.leave_type }}</td>
+            <td>{{ l.start_date }} → {{ l.end_date }}</td>
+            <td>{{ l.days }}</td>
+            <td>{{ l.reason }}</td>
+            <td>
+                {% if l.status == "Approved" %}
+                    <span class="badge bg-success">Approved</span>
+                {% elif l.status == "Rejected" %}
+                    <span class="badge bg-danger">Rejected</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+            </td>
+
+            {% if user.is_staff or user.is_superuser %}
+            <td>
+                {% if l.status == "Pending" %}
+                    <form
+                      method="post"
+                      action="{% url 'leave_status' l.id 'Approved' %}"
+                      class="d-inline">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-success">
+                            Approve
+                        </button>
+                    </form>
+
+                    <form
+                      method="post"
+                      action="{% url 'leave_status' l.id 'Rejected' %}"
+                      class="d-inline">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-danger">
+                            Reject
+                        </button>
+                    </form>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            {% endif %}
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="7" class="text-center py-4">
+                No leave records.
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+
+{% endblock %}

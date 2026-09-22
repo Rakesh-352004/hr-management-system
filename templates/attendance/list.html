@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance - HRMS{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h2>Attendance</h2>
+        <p class="text-muted">Employee attendance records</p>
+    </div>
+
+    {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'attendance_create' %}" class="btn btn-primary">
+            + Mark Attendance
+        </a>
+    {% endif %}
+</div>
+
+<div class="card table-card">
+<div class="table-responsive">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Employee</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for r in records %}
+        <tr>
+            <td>{{ r.date }}</td>
+            <td>{{ r.employee.user.get_full_name|default:r.employee.user.username }}</td>
+            <td>{{ r.check_in|default:"-" }}</td>
+            <td>{{ r.check_out|default:"-" }}</td>
+            <td>
+                {% if r.status == "Present" %}
+                    <span class="badge bg-success">Present</span>
+                {% elif r.status == "Absent" %}
+                    <span class="badge bg-danger">Absent</span>
+                {% elif r.status == "Leave" %}
+                    <span class="badge bg-warning text-dark">Leave</span>
+                {% else %}
+                    <span class="badge bg-secondary">Half Day</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="5" class="text-center py-4">
+                No attendance records.
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+
+{% endblock %}

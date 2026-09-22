@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Employees - HRMS{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2>Employees</h2>
+        <p class="text-muted mb-0">Manage employee information</p>
+    </div>
+
+    {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'employee_create' %}" class="btn btn-primary">
+            + Add Employee
+        </a>
+    {% endif %}
+</div>
+
+{% if user.is_staff or user.is_superuser %}
+<form method="get" class="mb-3">
+    <input
+      type="text"
+      name="q"
+      value="{{ query }}"
+      class="form-control"
+      placeholder="Search employee ID, name or designation">
+</form>
+{% endif %}
+
+<div class="card table-card">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Joining Date</th>
+                    <th>Salary</th>
+                    {% if user.is_staff or user.is_superuser %}
+                        <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for e in employees %}
+                <tr>
+                    <td>{{ e.employee_id }}</td>
+                    <td>
+                        {{ e.user.get_full_name|default:e.user.username }}
+                    </td>
+                    <td>{{ e.user.email|default:"-" }}</td>
+                    <td>{{ e.phone|default:"-" }}</td>
+                    <td>{{ e.department|default:"-" }}</td>
+                    <td>{{ e.designation|default:"-" }}</td>
+                    <td>{{ e.joining_date|default:"-" }}</td>
+                    <td>₹{{ e.basic_salary }}</td>
+
+                    {% if user.is_staff or user.is_superuser %}
+                    <td>
+                        <a
+                          href="{% url 'employee_update' e.id %}"
+                          class="btn btn-sm btn-outline-primary">
+                          Edit
+                        </a>
+
+                        <form
+                          method="post"
+                          action="{% url 'employee_delete' e.id %}"
+                          class="d-inline"
+                          onsubmit="return confirm('Delete this employee?');">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-outline-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center py-4">
+                        No employees found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

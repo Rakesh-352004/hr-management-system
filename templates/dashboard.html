@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - HRMS{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2>HR Dashboard</h2>
+    <p class="text-muted">
+        Welcome, {{ user.get_full_name|default:user.username }}
+    </p>
+</div>
+
+{% if is_admin %}
+
+<div class="row g-4">
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Active Employees</div>
+            <div class="stat-number">{{ employee_count }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Departments</div>
+            <div class="stat-number">{{ department_count }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Pending Leaves</div>
+            <div class="stat-number">{{ pending_leaves }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Present Today</div>
+            <div class="stat-number">{{ present_today }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Basic Salary Total</div>
+            <div class="stat-number">
+                ₹{{ salary_total|floatformat:2 }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Average Performance</div>
+            <div class="stat-number">
+                {{ average_rating|floatformat:1 }}/5
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="row g-4">
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">My Attendance Records</div>
+            <div class="stat-number">{{ my_attendance }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Pending Leaves</div>
+            <div class="stat-number">{{ my_pending_leaves }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Salary Total</div>
+            <div class="stat-number">
+                ₹{{ my_salary|floatformat:2 }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <div class="text-muted">Average Performance</div>
+            <div class="stat-number">
+                {{ my_average_rating|floatformat:1 }}/5
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

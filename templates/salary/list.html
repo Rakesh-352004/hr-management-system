@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Salary - HRMS{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h2>Salary</h2>
+        <p class="text-muted">Salary and payroll records</p>
+    </div>
+
+    {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'salary_create' %}" class="btn btn-primary">
+            + Add Salary
+        </a>
+    {% endif %}
+</div>
+
+<div class="card table-card">
+<div class="table-responsive">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Employee</th>
+            <th>Basic</th>
+            <th>Allowance</th>
+            <th>Deduction</th>
+            <th>Net Salary</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for s in salaries %}
+        <tr>
+            <td>{{ s.month|date:"F Y" }}</td>
+            <td>{{ s.employee.user.get_full_name|default:s.employee.user.username }}</td>
+            <td>₹{{ s.basic }}</td>
+            <td>₹{{ s.allowance }}</td>
+            <td>₹{{ s.deduction }}</td>
+            <td><strong>₹{{ s.net_salary }}</strong></td>
+            <td>
+                {% if s.paid %}
+                    <span class="badge bg-success">Paid</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="7" class="text-center py-4">
+                No salary records.
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+
+{% endblock %}
